@@ -11,13 +11,15 @@ module.exports = {
         sans: ['Inter', 'sans-serif'],
       },
       backgroundImage: {
-        'hero-gradient': 'linear-gradient(135deg, #8B5CF6 0%, #F59E0B 100%)',
+        'hero-gradient': 'linear-gradient(135deg, #A855F7 0%, #F59E0B 100%)',
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
       colors: {
-        'brand-purple': '#8B5CF6',
+        'brand-purple': '#A855F7',
         'brand-orange': '#F59E0B',
+        'light-purple': '#C4B5FD',
+        'light-orange': '#FCD34D',
       },
       animation: {
         'float': 'float 6s ease-in-out infinite',
