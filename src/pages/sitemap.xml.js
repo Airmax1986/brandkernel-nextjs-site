@@ -3,8 +3,6 @@ export default function Sitemap() {
 }
 
 export async function getServerSideProps({ res }) {
-  const { getAllPosts } = await import('@/lib/contentful')
-  
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://brandkernel.com'
   
   // Static pages
@@ -15,6 +13,9 @@ export async function getServerSideProps({ res }) {
   ]
   
   try {
+    // Dynamic import to avoid build issues
+    const { getAllPosts } = await import('@/lib/contentful')
+    
     // Get all blog posts
     const posts = await getAllPosts()
     
@@ -33,18 +34,19 @@ export async function getServerSideProps({ res }) {
           `
         })
         .join('')}
-      ${posts
+      ${posts && posts.length > 0 ? posts
+        .filter(post => post && post.slug)
         .map((post) => {
           return `
             <url>
               <loc>${baseUrl}/blog/${post.slug}</loc>
-              <lastmod>${new Date(post.date).toISOString()}</lastmod>
+              <lastmod>${new Date(post.date || new Date()).toISOString()}</lastmod>
               <changefreq>monthly</changefreq>
               <priority>0.6</priority>
             </url>
           `
         })
-        .join('')}
+        .join('') : ''}
     </urlset>
     `
 
