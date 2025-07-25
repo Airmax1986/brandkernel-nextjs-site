@@ -1,56 +1,54 @@
+// Contentful API with graceful fallbacks for missing environment variables
+
 import { createClient } from 'contentful'
 
-// Debug-Funktion für Environment Variables
-function validateEnvironmentVariables() {
-  const requiredVars = {
-    CONTENTFUL_SPACE_ID: process.env.CONTENTFUL_SPACE_ID,
-    CONTENTFUL_ACCESS_TOKEN: process.env.CONTENTFUL_ACCESS_TOKEN,
+// Safe environment variable access
+const getEnvVar = (name) => {
+  if (typeof process !== 'undefined' && process.env) {
+    return process.env[name]
   }
-
-  const missing = Object.entries(requiredVars)
-    .filter(([key, value]) => !value)
-    .map(([key]) => key)
-
-  if (missing.length > 0) {
-    console.error('❌ Missing environment variables:', missing)
-    console.error('Available env vars:', Object.keys(process.env).filter(key => key.startsWith('CONTENTFUL')))
-    
-    // In Production: Return empty data instead of crashing
-    if (process.env.NODE_ENV === 'production') {
-      console.warn('⚠️ Missing Contentful credentials - returning empty data')
-      return false
-    }
-    
-    throw new Error(`Missing required environment variables: ${missing.join(', ')}`)
-  }
-
-  console.log('✅ All Contentful environment variables are loaded')
-  return true
+  return undefined
 }
 
-// Sichere Client-Erstellung mit Fallback
+// Create client with fallback
 function createContentfulClient() {
-  if (!validateEnvironmentVariables()) {
-    // Return mock client for production builds without env vars
+  const spaceId = getEnvVar('CONTENTFUL_SPACE_ID')
+  const accessToken = getEnvVar('CONTENTFUL_ACCESS_TOKEN')
+
+  if (!spaceId || !accessToken) {
+    console.warn('⚠️ Contentful credentials not available - returning null client')
     return null
   }
 
-  return createClient({
-    space: process.env.CONTENTFUL_SPACE_ID,
-    accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
-  })
+  try {
+    return createClient({
+      space: spaceId,
+      accessToken: accessToken,
+    })
+  } catch (error) {
+    console.error('❌ Error creating Contentful client:', error)
+    return null
+  }
 }
 
 function createPreviewClient() {
-  if (!process.env.CONTENTFUL_PREVIEW_ACCESS_TOKEN) {
+  const spaceId = getEnvVar('CONTENTFUL_SPACE_ID')
+  const previewToken = getEnvVar('CONTENTFUL_PREVIEW_ACCESS_TOKEN')
+
+  if (!spaceId || !previewToken) {
     return null
   }
 
-  return createClient({
-    space: process.env.CONTENTFUL_SPACE_ID,
-    accessToken: process.env.CONTENTFUL_PREVIEW_ACCESS_TOKEN,
-    host: 'preview.contentful.com',
-  })
+  try {
+    return createClient({
+      space: spaceId,
+      accessToken: previewToken,
+      host: 'preview.contentful.com',
+    })
+  } catch (error) {
+    console.error('❌ Error creating Contentful preview client:', error)
+    return null
+  }
 }
 
 const client = createContentfulClient()
@@ -61,9 +59,9 @@ const getClient = (preview = false) => {
   return client
 }
 
-// Blog Posts abrufen mit Fallback für fehlende Credentials
+// Blog Posts with comprehensive error handling
 export async function getAllPosts(isDraftMode = false) {
-  // Fallback wenn keine Contentful Credentials
+  // Return empty array if client not available
   if (!client) {
     console.warn('⚠️ Contentful client not available - returning empty posts array')
     return []
@@ -80,30 +78,29 @@ export async function getAllPosts(isDraftMode = false) {
     console.log(`✅ Found ${entries.items.length} posts`)
 
     return entries.items.map((item) => ({
-      slug: item.fields.slug,
-      title: item.fields.title,
-      date: item.fields.date || item.sys.createdAt,
-      summary: item.fields.summary,
-      description: item.fields.description,
-      headerImage: item.fields.headerImage?.fields?.file?.url,
-      heroImage: item.fields.heroImage?.fields?.file?.url,
-      content: item.fields.content,
-      tags: item.fields.tags,
-      author: item.fields.author ? {
-        name: item.fields.author.fields?.name,
+      slug: item.fields?.slug || '',
+      title: item.fields?.title || 'Untitled',
+      date: item.fields?.date || item.sys?.createdAt || new Date().toISOString(),
+      summary: item.fields?.summary || '',
+      description: item.fields?.description || '',
+      headerImage: item.fields?.headerImage?.fields?.file?.url || null,
+      heroImage: item.fields?.heroImage?.fields?.file?.url || null,
+      content: item.fields?.content || '',
+      tags: item.fields?.tags || [],
+      author: item.fields?.author ? {
+        name: item.fields.author.fields?.name || 'Anonymous',
       } : null,
     }))
   } catch (error) {
     console.error('❌ Error fetching posts:', error)
-    // In Production: Return empty array instead of crashing
     return []
   }
 }
 
-// Einzelnen Post abrufen mit Fallback
+// Single post with error handling
 export async function getPost(slug, isDraftMode = false) {
-  if (!client) {
-    console.warn('⚠️ Contentful client not available - returning null for post')
+  if (!client || !slug) {
+    console.warn('⚠️ Contentful client not available or no slug provided')
     return null
   }
 
@@ -116,26 +113,26 @@ export async function getPost(slug, isDraftMode = false) {
       limit: 1,
     })
 
-    if (entries.items.length === 0) {
+    if (!entries?.items || entries.items.length === 0) {
       console.log(`❌ Post not found: ${slug}`)
       return null
     }
 
     const post = entries.items[0]
-    console.log(`✅ Found post: ${post.fields.title}`)
+    console.log(`✅ Found post: ${post.fields?.title || 'Untitled'}`)
 
     return {
-      slug: post.fields.slug,
-      title: post.fields.title,
-      date: post.fields.date || post.sys.createdAt,
-      content: post.fields.content,
-      summary: post.fields.summary,
-      description: post.fields.description,
-      headerImage: post.fields.headerImage?.fields?.file?.url,
-      heroImage: post.fields.heroImage?.fields?.file?.url,
-      tags: post.fields.tags,
-      author: post.fields.author ? {
-        name: post.fields.author.fields?.name,
+      slug: post.fields?.slug || slug,
+      title: post.fields?.title || 'Untitled',
+      date: post.fields?.date || post.sys?.createdAt || new Date().toISOString(),
+      content: post.fields?.content || '',
+      summary: post.fields?.summary || '',
+      description: post.fields?.description || '',
+      headerImage: post.fields?.headerImage?.fields?.file?.url || null,
+      heroImage: post.fields?.heroImage?.fields?.file?.url || null,
+      tags: post.fields?.tags || [],
+      author: post.fields?.author ? {
+        name: post.fields.author.fields?.name || 'Anonymous',
       } : null,
     }
   } catch (error) {
@@ -144,7 +141,7 @@ export async function getPost(slug, isDraftMode = false) {
   }
 }
 
-// Alle Slugs für Static Generation mit Fallback
+// All slugs for static generation
 export async function getAllPostSlugs() {
   if (!client) {
     console.warn('⚠️ Contentful client not available - returning empty slugs array')
@@ -157,20 +154,26 @@ export async function getAllPostSlugs() {
       select: 'fields.slug',
     })
 
+    if (!entries?.items) {
+      return []
+    }
+
     console.log(`✅ Found ${entries.items.length} slugs for static generation`)
 
-    return entries.items.map((item) => ({
-      params: {
-        slug: item.fields.slug,
-      },
-    }))
+    return entries.items
+      .filter(item => item.fields?.slug)
+      .map((item) => ({
+        params: {
+          slug: item.fields.slug,
+        },
+      }))
   } catch (error) {
     console.error('❌ Error fetching slugs:', error)
     return []
   }
 }
 
-// Autoren abrufen mit Fallback
+// Authors with error handling
 export async function getAllAuthors(isDraftMode = false) {
   if (!client) return []
 
@@ -180,9 +183,13 @@ export async function getAllAuthors(isDraftMode = false) {
       order: 'fields.name',
     })
 
+    if (!entries?.items) {
+      return []
+    }
+
     return entries.items.map((item) => ({
-      name: item.fields.name,
-      bio: item.fields.bio,
+      name: item.fields?.name || 'Anonymous',
+      bio: item.fields?.bio || '',
     }))
   } catch (error) {
     console.error('❌ Error fetching authors:', error)
@@ -190,9 +197,9 @@ export async function getAllAuthors(isDraftMode = false) {
   }
 }
 
-// Posts nach Kategorie filtern mit Fallback
+// Posts by category with error handling
 export async function getPostsByCategory(category, isDraftMode = false) {
-  if (!client) return []
+  if (!client || !category) return []
 
   try {
     const entries = await getClient(isDraftMode).getEntries({
@@ -201,12 +208,16 @@ export async function getPostsByCategory(category, isDraftMode = false) {
       order: '-sys.createdAt',
     })
 
+    if (!entries?.items) {
+      return []
+    }
+
     return entries.items.map((item) => ({
-      slug: item.fields.slug,
-      title: item.fields.title,
-      date: item.fields.date || item.sys.createdAt,
-      summary: item.fields.summary,
-      headerImage: item.fields.headerImage?.fields?.file?.url,
+      slug: item.fields?.slug || '',
+      title: item.fields?.title || 'Untitled',
+      date: item.fields?.date || item.sys?.createdAt || new Date().toISOString(),
+      summary: item.fields?.summary || '',
+      headerImage: item.fields?.headerImage?.fields?.file?.url || null,
     }))
   } catch (error) {
     console.error('❌ Error fetching posts by category:', error)
