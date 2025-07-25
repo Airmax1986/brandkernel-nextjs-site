@@ -70,8 +70,8 @@ export default function WaitlistForm() {
         <p className="text-white/80 mb-4">
           Thank you for joining our waitlist. We'll notify you as soon as BrandKernel is ready.
         </p>
-        <p className="text-sm text-orange-300">
-          <span className="font-semibold">247 people already joined</span>
+        <p className="text-sm text-brand-orange font-semibold">
+          247 people already joined
         </p>
       </motion.div>
     )
@@ -88,7 +88,7 @@ export default function WaitlistForm() {
         Be the first to discover your authentic personal brand with our AI-powered consultant.
       </p>
       
-      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
         <div className="flex-1">
           <input
             type="email"
@@ -97,7 +97,7 @@ export default function WaitlistForm() {
             onChange={(e) => setEmail(e.target.value)}
             required
             disabled={isSubmitting}
-            className="w-full px-4 py-3 rounded-lg bg-white text-gray-900 placeholder-gray-500 border-0 focus:ring-2 focus:ring-orange-400 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+            className="w-full px-4 py-3 rounded-xl bg-white/95 text-gray-900 placeholder-gray-500 border-0 focus:ring-2 focus:ring-brand-orange focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed text-base font-medium"
           />
         </div>
         
@@ -106,7 +106,7 @@ export default function WaitlistForm() {
           disabled={isSubmitting || !email}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2 text-lg"
+          className="bg-brand-orange hover:bg-orange-600 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2 text-base"
         >
           {isSubmitting ? (
             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -133,7 +133,7 @@ export default function WaitlistForm() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="text-orange-300 mt-6 text-lg font-semibold"
+        className="text-white/60 mt-6 text-lg font-medium"
       >
         247 people already joined
       </motion.p>
@@ -142,7 +142,7 @@ export default function WaitlistForm() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.7 }}
-        className="mt-8 flex items-center justify-center gap-4 text-white/60 text-sm"
+        className="mt-8 flex items-center justify-center gap-6 text-white/50 text-sm"
       >
         <div className="flex items-center gap-2">
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
