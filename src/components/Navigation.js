@@ -16,7 +16,7 @@ export default function Navigation() {
   ]
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-white/10 backdrop-blur-lg border-b border-white/20">
+    <nav className="fixed top-0 w-full z-50 bg-white/10 backdrop-blur-md border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
@@ -24,7 +24,7 @@ export default function Navigation() {
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="text-2xl font-bold text-white"
+              className="text-xl font-bold text-white"
             >
               BrandKernel
             </motion.div>
@@ -32,7 +32,7 @@ export default function Navigation() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-8">
+            <div className="ml-10 flex items-center space-x-8">
               {navItems.map((item, index) => (
                 <motion.div
                   key={item.name}
@@ -42,10 +42,10 @@ export default function Navigation() {
                 >
                   <Link
                     href={item.href}
-                    className="text-white/90 hover:text-white px-3 py-2 text-sm font-medium transition-colors duration-200 relative group"
+                    className="text-white/80 hover:text-white px-3 py-2 text-sm font-medium transition-colors duration-200 relative group"
                   >
                     {item.name}
-                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-orange-400 transition-all duration-300 group-hover:w-full"></span>
+                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full"></span>
                   </Link>
                 </motion.div>
               ))}
@@ -57,7 +57,7 @@ export default function Navigation() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="bg-white text-purple-600 px-6 py-2 rounded-lg font-semibold text-sm hover:bg-gray-100 transition-colors duration-200 shadow-lg"
+              className="bg-white text-brand-purple px-6 py-2 rounded-lg font-semibold text-sm hover:bg-gray-100 transition-colors duration-200 shadow-lg"
             >
               Join Waitlist
             </motion.button>
@@ -99,7 +99,7 @@ export default function Navigation() {
                 </Link>
               ))}
               <button
-                className="w-full text-left text-purple-600 bg-white hover:bg-gray-100 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 mt-4"
+                className="w-full text-left text-brand-purple bg-white hover:bg-gray-100 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 mt-4"
                 onClick={() => setIsOpen(false)}
               >
                 Join Waitlist
