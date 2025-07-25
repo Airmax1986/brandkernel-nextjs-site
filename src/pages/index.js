@@ -36,9 +36,9 @@ export default function Home({ posts }) {
 
       <div className="min-h-screen bg-hero-gradient relative overflow-hidden">
         {/* Background Elements */}
-        <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 opacity-20">
           <motion.div
-            className="absolute top-20 left-10 w-32 h-32 bg-white rounded-full blur-xl"
+            className="absolute top-20 left-10 w-32 h-32 bg-white rounded-full blur-3xl"
             animate={{
               x: [0, 20, 0],
               y: [0, -20, 0],
@@ -50,7 +50,7 @@ export default function Home({ posts }) {
             }}
           />
           <motion.div
-            className="absolute bottom-20 right-10 w-24 h-24 bg-white rounded-full blur-xl"
+            className="absolute bottom-20 right-10 w-24 h-24 bg-white rounded-full blur-3xl"
             animate={{
               x: [0, -20, 0],
               y: [0, 20, 0],
@@ -61,26 +61,36 @@ export default function Home({ posts }) {
               ease: "easeInOut"
             }}
           />
+          <motion.div
+            className="absolute top-1/2 left-1/3 w-16 h-16 bg-white rounded-full blur-2xl"
+            animate={{
+              scale: [1, 1.2, 1],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
         </div>
 
         {/* Navigation */}
         <Navigation />
 
         {/* Main Content */}
-        <main className="pt-20 pb-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
-            {/* Hero Section */}
-            <section className="text-center py-20">
+        <main className="relative z-10">
+          
+          {/* Hero Section */}
+          <section className="text-center pt-32 pb-16 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-6xl mx-auto">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="max-w-4xl mx-auto"
               >
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-8 leading-tight">
                   Finally stand out – with{' '}
-                  <span className="bg-gradient-to-r from-orange-400 to-orange-500 bg-clip-text text-transparent">
+                  <span className="text-brand-orange">
                     positioning that feels like you.
                   </span>
                 </h1>
@@ -89,12 +99,12 @@ export default function Home({ posts }) {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.2 }}
-                  className="text-xl sm:text-2xl text-white/90 mb-12 leading-relaxed max-w-3xl mx-auto"
+                  className="text-xl sm:text-2xl text-white/90 mb-12 leading-relaxed max-w-4xl mx-auto"
                 >
                   We guide you through a deep, personal brand discovery, powered by 
                   an empathetic AI brand consultant. Together, we'll uncover the core 
                   of your personality and what truly sets you apart.{' '}
-                  <span className="underline decoration-orange-400 decoration-2 underline-offset-4 cursor-pointer hover:decoration-orange-300 transition-colors">
+                  <span className="underline decoration-white/50 decoration-2 underline-offset-4 cursor-pointer hover:decoration-white/80 transition-colors">
                     Read more
                   </span>
                 </motion.p>
@@ -103,61 +113,29 @@ export default function Home({ posts }) {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.4 }}
+                  className="mb-16"
                 >
-                  <button className="group bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-3 mx-auto">
+                  <button className="group bg-brand-orange hover:bg-orange-600 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-3 mx-auto">
                     <ArrowRightIcon className="w-5 h-5 group-hover:transform group-hover:translate-x-1 transition-transform" />
                     Start your brand discovery now – receive your personal brand book after.
                   </button>
                 </motion.div>
               </motion.div>
-            </section>
+            </div>
+          </section>
 
-            {/* Waitlist Section */}
-            <motion.section
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-              className="py-16"
-            >
-              <div className="max-w-2xl mx-auto">
-                <WaitlistForm />
-              </div>
-            </motion.section>
+          {/* Waitlist Section */}
+          <motion.section
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="pb-16 px-4 sm:px-6 lg:px-8"
+          >
+            <div className="max-w-2xl mx-auto">
+              <WaitlistForm />
+            </div>
+          </motion.section>
 
-            {/* Features Preview */}
-            <motion.section
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
-              className="py-16"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-                <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-xl">
-                  <div className="w-12 h-12 bg-orange-500 rounded-full mx-auto mb-4 flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">1</span>
-                  </div>
-                  <h3 className="text-xl font-semibold text-white mb-2">Deep Discovery</h3>
-                  <p className="text-white/80">AI-powered analysis of your unique personality and values</p>
-                </div>
-                
-                <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-xl">
-                  <div className="w-12 h-12 bg-orange-500 rounded-full mx-auto mb-4 flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">2</span>
-                  </div>
-                  <h3 className="text-xl font-semibold text-white mb-2">Personal Brand Book</h3>
-                  <p className="text-white/80">Comprehensive guide tailored to your authentic self</p>
-                </div>
-                
-                <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-xl">
-                  <div className="w-12 h-12 bg-orange-500 rounded-full mx-auto mb-4 flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">3</span>
-                  </div>
-                  <h3 className="text-xl font-semibold text-white mb-2">Stand Out</h3>
-                  <p className="text-white/80">Position yourself authentically in your market</p>
-                </div>
-              </div>
-            </motion.section>
-          </div>
         </main>
 
         {/* Structured Data */}
